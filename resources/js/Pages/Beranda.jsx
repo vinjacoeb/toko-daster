@@ -1,9 +1,15 @@
 import React from 'react';
+import { Head } from '@inertiajs/react';
+import GuestLayout from '../Layouts/GuestLayout';
 
 export default function Beranda() {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <h1 className="text-4xl font-bold text-gray-800">Selamat datang di Toko Daster</h1>
-        </div>
+        <GuestLayout>
+            <Head title="Beranda" />
+            <div>
+                <h1 className="font-young-serif text-arang text-2xl">Selamat datang di Toko Daster</h1>
+                <p className="mt-2 text-abu">Temukan daster yang nyaman untuk segala acara</p>
+            </div>
+        </GuestLayout>
     );
 }

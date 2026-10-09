@@ -1,9 +1,30 @@
-@import 'tailwindcss';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@import "tailwindcss";
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-kapas: #F6F2E9;
+    --color-putih: #FFFFFF;
+    --color-pasir: #EAE3D3;
+    --color-garis: #D6CDB8;
+    --color-arang: #1E1B18;
+    --color-abu: #6B645A;
+    --color-pandan: #2E5E4E;
+    --color-pandan-gelap: #234A3D;
+    --color-pandan-muda: #DCE7DF;
+    --color-cabai: #B73A25;
+    --color-cabai-muda: #F6DAD3;
+    --color-kunyit: #E2A72E;
+    --color-kunyit-muda: #F7E7BE;
+    --color-lawon: #2D5B87;
+
+    --font-young-serif: "Young Serif", serif;
+    --font-hanken-grotesk: "Hanken Grotesk", sans-serif;
+}
+
+@layer base {
+    body {
+        @apply bg-kapas text-arang font-hanken-grotesk;
+    }
+    h1, h2, h3 {
+        @apply font-young-serif;
+    }
 }
