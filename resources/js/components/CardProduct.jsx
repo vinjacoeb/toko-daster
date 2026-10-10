@@ -49,9 +49,9 @@ export default function CardProduct({ product }) {
                 </h3>
                 {/* Harga */}
                 <div className="flex items-center gap-2">
-                    <span className="font-hanken-grotesk text-base font-semibold text-arang">Rp{harga.toLocaleString('id-ID')}</span>
-                    {harga_coret && (
-                        <span className="font-hanken-grotesk text-sm text-cabai line-through">Rp{harga_coret.toLocaleString('id-ID')}</span>
+                    <span className="font-hanken-grotesk text-base font-semibold text-arang">Rp{harga !== undefined && harga !== null ? Number(harga).toLocaleString('id-ID') : '0'}</span>
+                    {harga_coret !== undefined && harga_coret !== null && (
+                        <span className="font-hanken-grotesk text-sm text-cabai line-through">Rp{Number(harga_coret).toLocaleString('id-ID')}</span>
                     )}
                 </div>
                 {/* Varian ukuran tersedia */}

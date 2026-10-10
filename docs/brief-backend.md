@@ -22,3 +22,4 @@
 - Gunakan data seeder untuk isi contoh.
 - Jangan buat rute register.
 - Validasi data dari formulir di backend.
+- v1.1: Tabel baru `hero_slides`, `faqs`, `settings` via migrasi baru (tanpa fresh). Gunakan `docs/db.md` sebagai acuan skema. Endpoint laporan dukung cetak.

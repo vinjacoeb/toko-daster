@@ -22,5 +22,11 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        // 2. Kategori untuk produk (diperlukan oleh ProdukSeeder)
+        $this->call(CategorySeeder::class);
+
+        // 3. Produk Contoh (20 produk berbeda)
+        $this->call(ProdukSeeder::class);
     }
 }

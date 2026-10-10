@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ContactMessage extends Model
+{
+    protected $table = 'contact_messages';
+
+    protected $fillable = ['nama', 'kontak', 'pesan', 'dibaca_at', 'ip'];
+
+    protected $casts = [
+        'dibaca_at' => 'datetime',
+    ];
+}

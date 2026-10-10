@@ -24,3 +24,4 @@
 - Perhatikan impor `React` di setiap komponen.
 - Gunakan placeholder untuk produk tanpa foto.
 - Jangan ada teks "lorem ipsum" atau teks stok.
+- v1.1: Halaman wajib bebas teks placeholder (gunakan data DB via props). Cetak laporan via `window.print()`. Impor komponen persis case-sensitive tanpa eager glob. Carousel maks 5 slide tanpa autoplay.

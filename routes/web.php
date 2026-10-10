@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\AccountController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/product', [ProductController::class, 'index']);
@@ -19,11 +22,11 @@ Route::get('/product/{slug}', [ProductDetailController::class, 'index']);
 Route::get('/kontak-kami', [ContactController::class, 'index']);
 Route::post('/kontak-kami', [ContactController::class, 'store']);
 
-Route::get('/login', [LoginController::class, 'show'])->middleware(['guest']);
+Route::get('/login', [LoginController::class, 'show'])->middleware(['guest'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])->middleware(['guest']);
 Route::post('/logout', [LogoutController::class, 'destroy'])->middleware(['auth']);
 
-Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index']);
     Route::get('/pesan-masuk', [AdminMessageController::class, 'index']);
     Route::get('/stok', [StockController::class, 'index']);
@@ -39,8 +42,22 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/pesanan/{id}/batal', [OrderController::class, 'batal']);
     Route::post('/pesanan/{id}/kirim', [OrderController::class, 'kirim']);
     Route::get('/pesanan/{id}/cetak', [OrderController::class, 'cetak']);
-    Route::get('/produk', [AdminProductController::class, 'index']);
-    Route::get('/kategori', [CategoryController::class, 'index']);
+    // CRUD Produk
+    Route::get('/produk', [AdminProductController::class, 'index'])->name('admin.produk.index');
+    Route::post('/produk', [AdminProductController::class, 'store'])->name('admin.produk.store');
+    Route::put('/produk/{id}', [AdminProductController::class, 'update'])->name('admin.produk.update');
+    Route::patch('/produk/{id}', [AdminProductController::class, 'update']);
+    Route::delete('/produk/{id}', [AdminProductController::class, 'destroy'])->name('admin.produk.destroy');
+
+    // CRUD Kategori
+    Route::get('/kategori', [CategoryController::class, 'index'])->name('admin.kategori.index');
+    Route::post('/kategori', [CategoryController::class, 'store'])->name('admin.kategori.store');
+    Route::put('/kategori/{id}', [CategoryController::class, 'update'])->name('admin.kategori.update');
+    Route::patch('/kategori/{id}', [CategoryController::class, 'update']);
+    Route::delete('/kategori/{id}', [CategoryController::class, 'destroy']);
+    Route::get('/laporan', [ReportController::class, 'index']);
+    Route::get('/pengaturan', [SettingController::class, 'index']);
+    Route::get('/akun', [AccountController::class, 'index']);
 });
 
 

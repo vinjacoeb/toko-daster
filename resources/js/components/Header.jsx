@@ -1,12 +1,18 @@
 import React from 'react';
+import { usePage } from '@inertiajs/react';
 
 export default function Header() {
+    const { props } = usePage();
+    const settings = props.settings || {};
+    const whatsappNumber = settings.whatsappNumber || '';
+    const waUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=Hi,%20saya%20ingin%20tanya%20tentang%20produk.` : '#';
+
     return (
         <header className="bg-kapas border-b border-garis">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Wordmark kiri */}
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                         <span className="font-young-serif text-pandan text-2xl">Daster</span>
                     </div>
 
@@ -19,14 +25,23 @@ export default function Header() {
 
                     {/* Tombol WhatsApp */}
                     <div className="hidden md:block">
-                        <a
-                            href="https://wa.me/6281234567890"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-putih bg-pandan hover:bg-pandan-gelap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pandan"
-                        >
-                            Tanya lewat WhatsApp
-                        </a>
+                        {whatsappNumber ? (
+                            <a
+                                href={waUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm text-putih bg-pandan hover:bg-pandan-gelap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pandan"
+                            >
+                                Tanya lewat WhatsApp
+                            </a>
+                        ) : (
+                            <button
+                                disabled
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm text-putih bg-pasir cursor-not-allowed"
+                            >
+                                Tanya lewat WhatsApp
+                            </button>
+                        )}
                     </div>
 
                     {/* Tombol Menu ponsel */}

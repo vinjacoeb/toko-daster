@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-export const InputSearch = forwardRef(({ id, name, value, onChange, onKeyDown, placeholder = "Cari produk atau motif...", className = "", ...props }, ref) => (
+const InputSearch = forwardRef(({ id, name, value, onChange, onKeyDown, placeholder = "Cari produk atau motif...", className = "", ...props }, ref) => (
     <div className="relative">
         <input
             ref={ref}
@@ -21,3 +21,5 @@ export const InputSearch = forwardRef(({ id, name, value, onChange, onKeyDown, p
         </div>
     </div>
 ));
+
+export default InputSearch;

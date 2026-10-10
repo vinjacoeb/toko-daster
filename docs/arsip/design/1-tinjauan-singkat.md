@@ -1,7 +1,6 @@
 # Tinjauan Singkat Tugas UI/UX K2: Spesifikasi Layar Toko Daster
 
-## Tugas
-Jelaskan spesifikasi layar untuk semua rute tahap 1 (publik + admin) dalam berkas terpisah di `docs/design/`. Setiap halaman meliputi: layout/wireframe, semua state (loading, error, kosong, sukses), microcopy, dan props/payload yang diperlukan agar frontend dan backend bisa mengimplementasi antarmuka secara konsisten.
+Jelaskan spesifikasi layar untuk semua rute tahap 1 (publik + admin) dalam berkas terpisah di `docs/design/`. Setiap halaman meliputi: layout/wireframe, semua state (loading, error, kosong, sukses), microcopy, dan props/payload yang diperlukan agar frontend dan backend bisa mengimplementasi antarmuka secara konsisten. Fokus pada kebutuhan MVP, aturan PRD, dan design system.
 
 ## Pengguna Utama dan Sekunder
 - **Pengunjung Publik**: melihat katalog, detail produk, menghubungi toko, memesan via WhatsApp.

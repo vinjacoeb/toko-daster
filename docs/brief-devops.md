@@ -24,3 +24,4 @@
 ## Catatan
 - Jangan pernah mengubah atau membaca `.env` asli.
 - Blokir pekerjaan dengan `kanban_block` saat menunggu input pemilik di K1.
+- v1.1: Pastikan server lokal siap untuk pengujian HTTP QA di port 8000 dan Vite 5173 tanpa mengubah environment produksi.

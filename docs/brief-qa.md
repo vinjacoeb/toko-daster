@@ -20,3 +20,4 @@
 ## Catatan
 - Uji lewat HTTP ke server pemilik (`http://127.0.0.1:8000`).
 - Tulis "Belum diuji" untuk hal yang tidak dijalankan atau butuh browser, jangan menulis "lulus".
+- v1.1: Terapkan PRD Bagian 7: Tanpa ubah kode, catat per akar masalah di `docs/qa-gelombang-N.md`, buat kartu perbaikan per kelompok, verifikasi maks 2 putaran. Browser ditulis "Belum diuji, butuh browser".

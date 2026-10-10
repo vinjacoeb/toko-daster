@@ -18,3 +18,4 @@
 ## Catatan
 - Jika ada pertentangan dengan PRD, tanyakan Tech Lead. Jangan memutuskan sendiri.
 - Fokus pada kerapian dan kesederhanaan sesuai arah `design.md`.
+- v1.1: Lengkapi spesifikasi `docs/design-v1.1.md` untuk tab Pengaturan, Carousel, FAQ publik/admin, dan stylesheet cetak laporan penjualan (A4 potret).

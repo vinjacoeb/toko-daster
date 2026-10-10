@@ -38,9 +38,9 @@ Halaman publik utama yang memperkenalkan toko daster, menampilkan produk unggula
 ├────────────────────────────────────────────────────────────┤
 │ Blok gelap (--arang), judul pendek + tombol WhatsApp   │
 ├────────────────────────────────────────────────────────────┤
-│ Footer: Daster (28px Young Serif, --pandan)          │
+│ Footer: Daster (28px Young Serif, --kapas, latar --arang)          │
 │ ├─ Kolom: toko, tautan, kontak                        │
-│ └─ Baris hak cipta di bawah garis jahitan --abu       │
+│ └─ Baris hak cipta di bawah garis jahitan --abu (Tahun dinamis: PHP date('Y'))       │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -49,7 +49,7 @@ Halaman publik utama yang memperkenalkan toko daster, menampilkan produk unggula
 - **Tombol CTA WhatsApp** sekunder, immediate.
 - **Kartu produk** utama (klik ke detail), hover menampilkan detail harga.
 - **Tombol hapus filter** sekunder (jika diterapkan filter).
-- **Tombol kembali atas** sekunder (jika ada di tengah halaman).
+- **Isi tengah** dirancang rata kiri dan menempel secara alami pada margin grid (padding samping 20px ponsel, 32px desktop) tanpa kontainer pembungkus kaku/box artifisial.
 
 ## Komponen & Perilaku
 ### Header
@@ -97,7 +97,7 @@ Halaman publik utama yang memperkenalkan toko daster, menampilkan produk unggula
 
 ## State & Microcopy
 ### Default
-- Hero, produk unggulan, bagian cara pesan ditampilkan.
+- Hero, produk unggulan, keunggulan, cara pesan, dan footer ditampilkan lengkap.
 
 ### Loading
 - Skeleton untuk gambar produk (blok `--pasir` datar, denyut opasitas pelan, hormati `prefers-reduced-motion`).
@@ -171,7 +171,7 @@ Daster – Toko Daster (Young Serif, 22px+)
 - Kolom toko: "Toko Daster", alamat `[CONTOH]`, jam buka `[CONTOH]`
 - Tautan: Beranda, Produk, Kontak kami
 - Kontak: "WhatsApp", "email", "Instagram"
-- Hak cipta: "© 2024 Daster. Semua hak dilindungi."
+- Hak cipta: "© [Tahun Dinamis] Daster. Semua hak dilindungi." (gunakan tahun berjalan secara dinamis)
 
 ## Aksesibilitas & Fokus Keyboard
 - Fokus urutan: tombol WhatsApp → link produk → tautan footer.
