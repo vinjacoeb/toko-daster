@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
-import AdminLayout from '../../Layouts/AdminLayout';
-import Button from '../../components/Button';
-import Toast from '../../components/Toast';
+import AdminLayout from '../../../Layouts/AdminLayout';
+import Button from '../../../components/Button';
+import Toast from '../../../components/Toast';
 
 const SIZES = ['All Size', 'S', 'M', 'L', 'XL', 'Jumbo'];
 const STATUSES = ['draf', 'tayang', 'arsip'];

@@ -69,8 +69,8 @@ class DashboardController extends Controller
             });
 
         // Produk terlaris 30 hari terakhir
-        $produkTerlaris = OrderItem::select('product_id', \DB::raw('SUM(quantity) as total_terjual'))
-            ->join('orders', 'orders_items.order_id', '=', 'orders.id')
+        $produkTerlaris = OrderItem::select('product_id', \DB::raw('SUM(qty) as total_terjual'))
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.status', '!=', 'batal')
             ->where('orders.dipesan_at', '>=', $today->copy()->subDays(30))
             ->groupBy('product_id')

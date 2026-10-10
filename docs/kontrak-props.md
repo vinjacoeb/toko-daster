@@ -1,40 +1,98 @@
 #  Halaman: Admin Dashboard (AdminDashboardController)
 
 ### Rute
-- nama_rute: `admin.dashboard`
+- nama_rute: `admin.index`
 - path: `/admin`
 
 ### Akses
 - peran: `admin`
 
-### Query yang diterima
-- Tidak ada (hanya membaca data)
-
 ### Props
 ```json
 {
   "title": "Dashboard",
-  "data": {
-    "topProducts": [
-      {
-        "product_name": "string",
-        "total_sold": "integer"
-      }
-    ],
-    "orderStats": {
-      "total_orders": "integer",
-      "total_revenue": "integer",
-      "pending_orders": "integer"
-    }
+  "stats": {
+    "todayRevenue": "integer",
+    "thisMonthRevenue": "integer",
+    "monthOverMonth": "float",
+    "pendingOrders": "integer",
+    "lowStock": "integer",
+    "unreadMessages": "integer"
+  },
+  "grafik_omzet": "array", 
+  "produk_terlaris": "array",
+  "pesanan_terbaru": "array",
+  "stok_menipis": "array",
+  "settings": {
+    "whatsappNumber": "string",
+    "storeName": "string"
   }
 }
 ```
 
-### Validasi dan Pesan Galat Formulir
-- Tidak ada formulir (hanya tampilan)
+### Status
+LOCKED
+
+## Admin Laporan (/admin/laporan)
+
+### Rute
+- nama_rute: `admin.laporan.index`
+- path: `/admin/laporan`
+
+### Akses
+- peran: `admin`
+
+### Query
+- `tanggal_dari`, `tanggal_sampai`
+
+### Props
+```json
+{
+  "title": "Laporan",
+  "user": { "id": "integer", "name": "string", "email": "string" },
+  "data": {
+    "omzetHariIni": "integer",
+    "omzetBulanIni": "integer",
+    "persentaseBulanLalu": "float",
+    "pesananPerluDiproses": "integer",
+    "varianStokMenipis": "integer",
+    "pesanBelumDibaca": "integer",
+    "produkTerlaris": "array",
+    "pesananTerbaru": "array",
+    "varianStokMenipisList": "array"
+  },
+  "filters": "object",
+  "settings": "object"
+}
+```
+
+### Aturan
+- Cetak laporan: Frontend menggunakan `window.print()` dan CSS @media print.
+- CSV: Tautan unduh CSV (ekspor data berdasarkan filter).
 
 ### Status
-- LOCKED
+DRAFT
+
+## Admin Pesan Masuk (/admin/pesan-masuk)
+
+### Rute
+- nama_rute: `admin.pesan-masuk.index`
+- path: `/admin/pesan-masuk`
+
+### Akses
+- peran: `admin`
+
+### Props
+```json
+{
+  "title": "Pesan Masuk",
+  "messages": "object" 
+}
+```
+
+### Status
+DRAFT
+
 
 ### Rute
 - `GET /login`
@@ -298,6 +356,10 @@ Untuk `GET /admin/stok/{id}/riwayat`:
 }
 ```
 
+Adendum t_e2268016 (kompatibel mundur, props Inertia di atas tidak berubah):
+- Drawer riwayat pada halaman `Admin/Stok/Stok.jsx` memanggil URL yang sama dengan header `Accept: application/json` dan menerima JSON `{ "variant": "object", "movements": "object" }`, dengan `movements` memakai bentuk paginator Laravel yang sama (`data`, `links`, `meta`).
+- Navigasi biasa (Inertia, tanpa header JSON) tetap menerima props halaman `Admin/Stok/Riwayat` seperti kontrak di atas. Tidak ada rute `/api` baru.
+
 ### Aturan validasi dan pesan galat
 |- Validasi di server:
   - `POST /admin/stok`: `variant_id` wajib, `quantity` wajib (integer, tidak nol), `reason` wajib (string: restock|koreksi|rusak-hilang), `note` opsional.
@@ -368,10 +430,39 @@ DRAFT
 ```
 
 ### Aturan validasi dan pesan galat
-|- Jika produk tidak ada, draf, atau diarsipkan, tampilkan halaman 404 yang ramah (data dari PRD bagian 5.3).
-|- Ambil produk dari database menggunakan `slug` dengan eager load kategori, varian, dan gambar.
-|- Batasi gambar hingga maksimal 8.
-|- Validasi server sisi client tidak diizinkan.
+- Jika produk tidak ada, draf, atau diarsipkan, tampilkan halaman 404 yang ramah (data dari PRD bagian 5.3).
+- Ambil produk dari database menggunakan `slug` dengan eager load kategori, varian, dan gambar.
+- Batasi gambar hingga maksimal 8.
+- Validasi server sisi client tidak diizinkan.
+
+### Status
+DRAFT
+
+## Standarisasi Controller Admin (t_d2c95e63)
+
+### Rute dan nama rute (tidak berubah)
+- `GET /admin` -> `admin.index` -> `App\Http\Controllers\Admin\DashboardController@index`
+- `GET /admin/pesan-masuk` -> `admin.pesan-masuk.index` -> `App\Http\Controllers\Admin\MessageController@index`
+- `GET /admin/pesanan`, `GET /admin/pesanan/create`, `POST /admin/pesanan`, `GET /admin/pesanan/{id}`, `PUT/PATCH /admin/pesanan/{id}`, `DELETE /admin/pesanan/{id}`, `POST /admin/pesanan/{id}/batal`, `POST /admin/pesanan/{id}/kirim`, `GET /admin/pesanan/{id}/cetak` -> `admin.pesanan.*` -> `App\Http\Controllers\Admin\OrderController` (sudah kanonis, tidak diubah)
+
+### Pemetaan lama -> baru
+- `App\Http\Controllers\AdminDashboardController` (hapus) -> `App\Http\Controllers\Admin\DashboardController` (kanonis, dipakai rute `admin.index`)
+- `App\Http\Controllers\AdminMessageController` (hapus, pindah) -> `App\Http\Controllers\Admin\MessageController` (baru, dipakai rute `admin.pesan-masuk.index`)
+- `App\Http\Controllers\AdminOrderController` (hapus, stub mati tak dipakai rute) -> `App\Http\Controllers\Admin\OrderController` (kanonis yang sudah dipakai rute, tidak ditimpa)
+
+### Siapa yang boleh mengakses
+- Semua rute di atas: `admin` (middleware `auth` pada grup `prefix admin` di `routes/web.php`)
+
+### Query yang diterima
+- Tidak berubah oleh kartu ini. `GET /admin/pesan-masuk`: paginasi standar (`page`, `per_page` bawaan 20).
+
+### Props yang dikembalikan
+- `GET /admin`: props dari `Admin\DashboardController@index` apa adanya (komponen `Admin/Dashboard/Index`): `{ "title": "string", "data": "object", "settings": "object" }`. Catatan: bagian LOCKED `Halaman: Admin Dashboard (AdminDashboardController)` di atas TIDAK diubah di kartu ini;props kanonis berbeda key (`data.omzetHariIni` dkk vs `stats.todayRevenue` dkk) dan perlu koordinasi frontend (t_3879c444) sebelum bagian LOCKED itu dimutakhirkan.
+- `GET /admin/pesan-masuk`: `{ "title": "Pesan Masuk", "messages": "object" }`, `messages` paginator Laravel (`data`, `links`, `meta`). Sama seperti sebelumnya; hanya namespace controller dan path komponen yang berubah (`AdminPesanMasuk` -> `Admin/PesanMasuk/Index` sesuai standar `docs/refactor-admin-standard.md`, komponen `Index.jsx` sudah ada dan membaca `messages.data`).
+- Rute pesanan: props tidak berubah di kartu ini (dirender `Admin/Order/Index`, `Admin/Order/Show` oleh `Admin\OrderController` yang sudah ada).
+
+### Aturan validasi dan pesan galat
+- Tidak ada formulir baru di kartu ini. Galat validasi memakai mekanisme errors Inertia; pesan sukses lewat flash.
 
 ### Status
 DRAFT

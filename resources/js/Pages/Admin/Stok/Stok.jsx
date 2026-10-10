@@ -12,7 +12,7 @@ function formatRupiah(n) {
 }
 
 export default function AdminStok() {
-    const { data: paginatedData, filters = {}, title, flash } = usePage().props;
+    const { data: paginatedData, stats = { menipis: 0, habis: 0 }, filters = {}, title, flash } = usePage().props;
     const variants = paginatedData?.data ?? [];
     const links = paginatedData?.links ?? [];
     const total = paginatedData?.total ?? 0;
@@ -130,8 +130,8 @@ export default function AdminStok() {
         }
     };
 
-    const countMenipis = variants.filter(v => v.stock > 0 && v.stock <= (v.stock_minimum ?? 3)).length;
-    const countHabis = variants.filter(v => v.stock <= 0).length;
+    const countMenipis = stats.menipis;
+    const countHabis = stats.habis;
 
     return (
         <AdminLayout>

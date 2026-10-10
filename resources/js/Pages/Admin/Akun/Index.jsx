@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../Layouts/AdminLayout';
+import AdminLayout from '../../../Layouts/AdminLayout';
 
 export default function AdminAkun({ title, user, data, settings }) {
     // Use the user prop passed from the controller (logged-in user)

@@ -23,10 +23,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Kategori untuk produk (diperlukan oleh ProdukSeeder)
+        // 2. Pengaturan Toko
+        $this->call(SettingsSeeder::class);
+
+        // 3. Kategori untuk produk (diperlukan oleh ProdukSeeder)
         $this->call(CategorySeeder::class);
 
-        // 3. Produk Contoh (20 produk berbeda)
+        // 4. Produk Contoh (20 produk berbeda)
         $this->call(ProdukSeeder::class);
     }
 }

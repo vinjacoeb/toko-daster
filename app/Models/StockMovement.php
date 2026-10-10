@@ -16,6 +16,7 @@ class StockMovement extends Model
         'variant_id',
         'order_id',
         'jumlah',
+        'stok_akhir',
         'alasan',
         'catatan',
         'user_id',

@@ -1,3 +1,35 @@
+# Standarisasi Controller Admin (t_d2c95e63)
+
+## Rencana (maks 10 baris)
+- Kontrak dulu: tambah bagian standarisasi di docs/kontrak-props.md (pemetaan lama->baru, rute tak berubah, props tak berubah), status DRAFT.
+- Buat app/Http/Controllers/Admin/MessageController.php (pindahan AdminMessageController, render Admin/PesanMasuk/Index).
+- Hapus duplikat root: AdminDashboardController.php, AdminMessageController.php, AdminOrderController.php (kanonis di Admin\).
+- Update routes/web.php: import DashboardController+MessageController dari Admin\, arahkan admin.index + pesan-masuk ke sana.
+- Verifikasi: php -l, route:list --path=admin. Tanpa migrasi/seeder, tanpa ubah .env.
+- Berkas disentuh: kontrak-props.md, MessageController.php (baru), web.php, hapus 3 file root, catatan-backend.md, asumsi.md.
+
+## Hasil Verifikasi
+- `php -l` bersih: routes/web.php + 9 file Admin/*.php (Account, Category, Dashboard, Message, Order, Product, Report, Setting, Stock).
+- `php artisan route:list --path=admin` → 28 rute; `admin.index → Admin\DashboardController@index`, `admin.pesan-masuk.index → Admin\MessageController@index`, `admin.pesanan.* → Admin\OrderController`.
+- `ls app/Http/Controllers/Admin*.php` → tidak ada (duplikat root terhapus); `ls Admin/` → 9 file standar.
+- Tanpa migrate/seed, tanpa ubah .env.
+
+## Temuan luar lingkup (tidak diperbaiki di kartu ini)
+- Rute `GET /admin/pesanan/create → OrderController@create` tidak punya method `create` (bawaan sebelum kartu ini).
+- Direktori kosong `app/Http/Controllers/Admin/StockController/` (tanpa file) dibiarkan.
+- Props kanonis `Admin\DashboardController` (`data.omzetHariIni` dkk) berbeda dari bagian LOCKED kontrak lama (`stats.todayRevenue` dkk); pemutakhiran LOCKED menunggu koordinasi frontend t_3879c444.
+- Komponen root `AdminPesanMasuk.jsx` / `Admin/Dashboard.jsx` / `Admin/Pesanan.jsx` vs terstruktur `Index.jsx` adalah ranah frontend t_3879c444; backend kini merender path terstruktur.
+
+# Fix riwayat edit stok — drawer selalu kosong (t_e2268016)
+
+## Rencana (maks 10 baris)
+- Verifikasi attempt 1: kolom variant_id + deleted_at ada di stock_movements; getVariantHistory ada.
+- Akar masalah sisa: drawer Stok.jsx fetch JSON (Accept: application/json), controller hanya balas Inertia HTML → res.json() gagal → drawer selalu "Belum ada riwayat".
+- Kontrak dulu: catat varian respons JSON di docs/kontrak-props.md (props Inertia tidak berubah, LOCKED tetap).
+- Implementasi: history() balas JSON bila wantsJson; getVariantHistory eager load order (PRD 6.4: pesanan terkait).
+- Verifikasi: php -l, route:list, tinker (jalur JSON + baca data variant 1). Tanpa migrate:fresh, tanpa ubah frontend.
+- Berkas: app/Http/Controllers/Admin/StockController.php, app/Services/StockService.php, kontrak-props.md, db.md, asumsi.md.
+
 # Rencana Kerja B2: Admin Produk & Kategori (t_a0a22439)
 
 ## Rencana (maks 10 baris)

@@ -27,10 +27,12 @@ class StockController extends Controller
         ];
 
         $variants = $this->stockService->getStockList($filters, 20);
+        $stats = $this->stockService->getGlobalStats($filters);
 
         return Inertia::render('Admin/Stok/Stok', [
             'title' => 'Manajemen Stok',
             'data' => $variants,
+            'stats' => $stats,
             'filters' => $filters,
         ]);
     }
@@ -59,10 +61,17 @@ class StockController extends Controller
         }
     }
 
-    public function history(int $id)
+    public function history(Request $request, int $id)
     {
         $variant = Variant::with('product')->findOrFail($id);
         $movements = $this->stockService->getVariantHistory($id, 20);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'variant' => $variant,
+                'movements' => $movements,
+            ]);
+        }
 
         return Inertia::render('Admin/Stok/Riwayat', [
             'title' => 'Riwayat Mutasi Stok',

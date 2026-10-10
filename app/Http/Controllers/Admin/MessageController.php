@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use Inertia\Inertia;
 
-class AdminMessageController extends Controller
+class MessageController extends Controller
 {
     public function index()
     {
         $messages = ContactMessage::orderBy('created_at', 'desc')->paginate(20);
 
-        return Inertia::render('AdminPesanMasuk', [
+        return Inertia::render('Admin/PesanMasuk/Index', [
             'title' => 'Pesan Masuk',
             'messages' => $messages,
         ]);

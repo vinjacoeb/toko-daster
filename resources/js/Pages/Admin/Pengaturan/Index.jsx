@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../Layouts/AdminLayout';
+import AdminLayout from '../../../Layouts/AdminLayout';
 
 export default function AdminPengaturan({ title, user, data, settings }) {
     const [formSettings, setFormSettings] = useState({
