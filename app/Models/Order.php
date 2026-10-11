@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    // Bersihkan duplikat deklarasi OrderItem yang salah
+
     protected $table = 'orders';
 
     protected $fillable = [
@@ -25,11 +27,13 @@ class Order extends Model
         'tracking_number',
         'note',
         'ordered_at',
+        'dipesan_at',
         'user_id',
     ];
 
     protected $casts = [
         'ordered_at' => 'datetime',
+        'dipesan_at' => 'datetime',
         'subtotal' => 'integer',
         'shipping_cost' => 'integer',
         'discount' => 'integer',
@@ -44,36 +48,5 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
-    }
-}
-
-class OrderItem extends Model
-{
-    protected $table = 'order_items';
-
-    #[Fillable([
-        'order_id',
-        'variant_id',
-        'product_id',
-        'price',
-        'quantity',
-        'nama',
-        'warna',
-        'ukuran',
-    ])]
-    #[Hidden(['deleted_at'])]
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
-    }
-
-    public function variant(): BelongsTo
-    {
-        return $this->belongsTo(Variant::class);
-    }
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
     }
 }

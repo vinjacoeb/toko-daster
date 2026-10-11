@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductDetailController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Admin\ContactMessageCommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\StockController;
@@ -29,6 +30,9 @@ Route::post('/logout', [LogoutController::class, 'destroy'])->middleware(['auth'
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/pesan-masuk', [MessageController::class, 'index'])->name('admin.pesan-masuk.index');
+    Route::patch('/pesan-masuk/{id}/dibaca', [MessageController::class, 'dibaca'])->name('admin.pesan-masuk.dibaca');
+    Route::post('/pesan-masuk/{pesan}/komentar', [ContactMessageCommentController::class, 'store'])->name('admin.pesan-masuk.komentar.store');
+    Route::delete('/pesan-masuk/{id}', [MessageController::class, 'destroy'])->name('admin.pesan-masuk.destroy');
     Route::get('/stok', [StockController::class, 'index'])->name('admin.stok.index');
     Route::post('/stok', [StockController::class, 'store'])->name('admin.stok.store');
     Route::get('/stok/{id}/riwayat', [StockController::class, 'history'])->name('admin.stok.history');

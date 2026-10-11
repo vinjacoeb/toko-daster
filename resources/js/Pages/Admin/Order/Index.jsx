@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 
 export default function Pesanan() {
@@ -17,9 +17,9 @@ export default function Pesanan() {
                             <tr className="bg-pasir text-abu text-[13px] font-semibold border-b border-garis">
                                 <th className="py-3 px-4">Kode</th>
                                 <th className="py-3 px-4">Pelanggan</th>
-                                <th className="py-3 px-4">Channel</th>
+                                <th className="py-3 px-4">Barang</th>
+                                <th className="py-3 px-4 text-center">Total</th>
                                 <th className="py-3 px-4">Status</th>
-                                <th className="py-3 px-4 text-right">Total</th>
                                 <th className="py-3 px-4 text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -36,10 +36,10 @@ export default function Pesanan() {
                                                 </div>
                                             ))}
                                         </td>
-                                        <td className="py-3 px-4 text-right font-mono">Rp{order.total.toLocaleString('id-ID')}</td>
+                                        <td className="py-3 px-4 text-center font-mono">Rp{order.total.toLocaleString('id-ID')}</td>
                                         <td className="py-3 px-4 capitalize">{order.status}</td>
                                         <td className="py-3 px-4 text-right">
-                                            <Link href={route('admin.pesanan.show', order.id)} className="text-pandan hover:underline">Detail</Link>
+                                            <Link href={`/admin/pesanan/${order.id}`} className="text-pandan hover:underline">Detail</Link>
                                         </td>
                                     </tr>
                                 ))

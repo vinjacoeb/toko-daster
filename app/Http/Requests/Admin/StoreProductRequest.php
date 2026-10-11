@@ -26,11 +26,11 @@ class StoreProductRequest extends FormRequest
             'status' => ['required', Rule::in(['draf', 'tayang', 'arsip'])],
             'featured' => ['boolean'],
             'variants' => ['required', 'array', 'min:1'],
-            'variants.*.size' => ['required', Rule::in(['All Size', 'S', 'M', 'L', 'XL', 'Jumbo'])],
-            'variants.*.color' => ['required', 'string'],
+            'variants.*.ukuran' => ['required', Rule::in(['All Size', 'S', 'M', 'L', 'XL', 'Jumbo'])],
+            'variants.*.warna' => ['required', 'string'],
             'variants.*.sku' => ['required', 'string'],
-            'variants.*.stock' => ['required', 'integer', 'min:0'],
-            'variants.*.stock_minimum' => ['required', 'integer', 'min:0'],
+            'variants.*.stok' => ['required', 'integer', 'min:0'],
+            'variants.*.stok_minimum' => ['required', 'integer', 'min:0'],
         ];
     }
 }

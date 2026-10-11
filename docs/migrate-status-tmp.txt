@@ -1,0 +1,18 @@
+
+ Migration name .. Batch / Status 
+ 2026_10_10_010000_create_users_table .. [1] Ran 
+ 2026_10_10_010001_create_sessions_table .. [1] Ran 
+ 2026_10_10_010002_create_categories_table .. [1] Ran 
+ 2026_10_10_010003_create_products_table .. [1] Ran 
+ 2026_10_10_010004_create_product_images_table .. [1] Ran 
+ 2026_10_10_010005_create_variants_table .. [1] Ran 
+ 2026_10_10_010006_create_orders_table .. [1] Ran 
+ 2026_10_10_010007_create_order_items_table .. [1] Ran 
+ 2026_10_10_010008_create_stock_movements_table .. [2] Ran 
+ 2026_10_10_010009_create_contact_messages_table .. [2] Ran 
+ 2026_10_10_010010_create_settings_table .. [2] Ran 
+ 2026_10_10_201505_add_deleted_at_to_stock_movements_table .. [3] Ran 
+ 2026_10_10_204500_add_stok_akhir_to_stock_movements_table .. [4] Ran 
+ 2026_10_10_233000_add_dipesan_at_to_orders_table .. [5] Ran 
+ 2026_10_10_235959_rename_stock_to_stok_in_variants_table .. Pending 
+

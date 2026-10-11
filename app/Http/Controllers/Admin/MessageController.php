@@ -17,4 +17,16 @@ class MessageController extends Controller
             'messages' => $messages,
         ]);
     }
+
+    public function dibaca($id)
+    {
+        ContactMessage::findOrFail($id)->update(['dibaca_at' => now()]);
+        return back()->with('success', 'Pesan ditandai dibaca.');
+    }
+
+    public function destroy($id)
+    {
+        ContactMessage::findOrFail($id)->delete();
+        return back()->with('success', 'Pesan berhasil dihapus.');
+    }
 }

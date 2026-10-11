@@ -6,12 +6,12 @@ export default function AdminPesanMasuk() {
     const pesanList = messages.data || [];
 
     const tandaiDibaca = (id) => {
-        router.patch(route('admin.pesanan.update', id)); // Placeholder route untuk patch
+        router.patch(`/admin/pesan-masuk/${id}/dibaca`);
     };
 
     const hapusPesan = (id) => {
         if (confirm('Yakin ingin menghapus pesan ini?')) {
-            router.delete(route('admin.pesanan.destroy', id)); // Placeholder route untuk delete
+            router.delete(`/admin/pesan-masuk/${id}`);
         }
     };
 

@@ -13,4 +13,9 @@ class ContactMessage extends Model
     protected $casts = [
         'dibaca_at' => 'datetime',
     ];
+
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ContactMessageComment::class, 'contact_message_id');
+    }
 }

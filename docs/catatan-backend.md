@@ -1,4 +1,36 @@
+# 2026-10-11: Fix ParseError Order.php baris 57 (t_b9df5dc2)
+## Rencana
+- Hapus sisa duplikat OrderItem rusak di luar class (baris 54-84): protected $table + atribut #[...] + 3 relasi.
+- OrderItem kanonis tetap di app/Models/OrderItem.php (tidak diubah). Berkas disentuh: Order.php, catatan-backend.md.
+## Hasil
+- php -l bersih Order.php + OrderItem.php; route:list --path=admin tampil 28 rute (ParseError hilang).
+- write_file ditolak 2x oleh stale guard (read parsial) lalu patch sekali pada blok tanpa backslash, sesuai aturan 9.
+- Belum dicek: render /admin di browser (perlu server+DB oleh pemilik); tanpa migrate/seed di kartu ini.
+
+# 2026-10-11: Dashboard kontrak baru + definisi omzet/stok (t_8529f2f2, BUG-DASH-01)
+
+## Rencana (maks 10 baris)
+- Kontrak dulu: tambah `## Admin Dashboard (/admin)` LOCKED di docs/kontrak-props.md (props §7 dashboard-tambahan.md) + normalisasi berkas (isi terduplikasi 2x, 866 baris -> 1 salinan).
+- Tulis ulang app/Http/Controllers/Admin/DashboardController.php -> props snake_case { kartu, perbandingan (hari_ini/minggu_ini/bulan_ini), pendapatan_bulanan, riwayat_pesanan_minggu_ini, produk_terlaris, stok_menipis_daftar }.
+- Definisi omzet: SUM(total) status dibayar,dikemas,dikirim,selesai by dipesan_at (bukan `!= batal`).
+- Stok menipis: stok>0 AND stok<=stok_minimum via whereColumn + produk non-arsip.
+- Selaraskan app/Http/Controllers/Admin/ReportController.php (definisi omzet sama + mapping code/customer_name/name/size/color).
+- Perbaiki app/Models/Order.php (hapus deklarasi `class OrderItem` duplikat -> fatal autoload).
+- Migrasi indeks (status, dipesan_at) di tabel orders.
+- Verifikasi: php -l, route:list, migrate, curl /admin. Berkas disentuh: DashboardController, ReportController, Order.php, migrasi baru, kontrak-props.md, catatan-backend.md, asumsi.md.
+
 # Standarisasi Controller Admin (t_d2c95e63)
+
+# 2026-10-11: Membuat PesananSeeder dan PesanMasukSeeder
+- Telah membuat `database/seeders/PesananSeeder.php` dan `database/seeders/PesanMasukSeeder.php`
+- Kedua seeder idempoten: hapus [CONTOH] (pesanan dan pesan) sebelum seed
+- Seeder hanya berjalan pada environment lokal (app()->isLocal())
+- Menyalin data contoh sesuai PRD dan seed-pesanan.md (status, kanal, tanggal, penomoran kode, alamat, diskon, subtotal, total akurat)
+- Pesanan memakai varian milik produk `tayang` dan tidak mengubah stok/stock_movements
+- Dua kali seed tetap 40 pesanan, minimal 40 item, 12 pesan
+- Tidak menyentuh user, kategori, produk, varian, pengaturan
+- Semua pesanan dicatat [CONTOH] pada kolom `note`; semua pesan ip=127.0.0.1
+- Perubahan diverifikasi dengan seed dua kali dan dicek php artisan tinker/db:show
 
 ## Rencana (maks 10 baris)
 - Kontrak dulu: tambah bagian standarisasi di docs/kontrak-props.md (pemetaan lama->baru, rute tak berubah, props tak berubah), status DRAFT.
@@ -30,12 +62,15 @@
 - Verifikasi: php -l, route:list, tinker (jalur JSON + baca data variant 1). Tanpa migrate:fresh, tanpa ubah frontend.
 - Berkas: app/Http/Controllers/Admin/StockController.php, app/Services/StockService.php, kontrak-props.md, db.md, asumsi.md.
 
-# Rencana Kerja B2: Admin Produk & Kategori (t_a0a22439)
+# Perbaikan error admin (Task t_869a7fde)
 
 ## Rencana (maks 10 baris)
-- Audit controller stub `ProductController` & `CategoryController` di `app/Http/Controllers/Admin/`.
-- Lengkapi implementasi index, store, update, destroy sesuai `docs/kontrak-props.md`.
-- Verifikasi dengan `php -l` dan `php artisan route:list`.
+1. Audit path Inertia: perbaiki `Admin/Produk`, `Admin/Kategori` ke `Admin/Produk/Index`, `Admin/Kategori/Index`.
+2. Perbaiki model Category: hapus `#[Fillable]` dan ganti ke `$fillable` standar.
+3. Cek kolom stok/stok_minimum di `variants` dan seeder (docs/seed-produk.md).
+4. Tambahkan kolom `variant_id` di `stock_movements`.
+5. Update refs di seluruh tempat (service, request, props) sesuai standar PRD.
+6. Verifikasi `php -l`, `php artisan route:list`, tes seeder.
 
 # Fix filters /product (t_8583394d)
 
@@ -187,4 +222,65 @@ Memperbaiki query `produkTerlaris` pada `ReportController.php` karena kesalahan 
 - `php -l app/Models/Product.php` → No syntax errors.
 
 
+# 2026-10-11: Fix error detail pesanan /admin/pesanan/42 (t_748c0b08)
 
+## Rencana
+1. Memperbaiki `OrderController.php`:
+   - Gunakan nama kolom database yang benar (`code`, `customer_name`, `customer_phone`, `address`, `channel`, `shipping_cost`, `discount`, `tracking_number`, `dipesan_at`).
+   - Perbaiki validasi dan pengisian pada method `store` dan `update`.
+2. Memperbaiki `resources/js/Pages/Admin/Order/Show.jsx`:
+   - Sesuaikan penggunaan properti pesanan (`order.code`, `order.customer_name`, `order.customer_phone`, `order.address`, `order.channel`, `order.shipping_cost`, `order.discount`, `order.tracking_number`).
+3. Verifikasi sintaks PHP dan route:list.
+
+## Hasil
+- Patch diterapkan pada `OrderController.php` dan `Show.jsx` (rute dan kolom diperbaiki).
+- Verifikasi sintaks PHP (`php -l app/Http/Controllers/Admin/OrderController.php`) dan (`php -l resources/js/Pages/Admin/Order/Show.jsx`) berhasil.
+- Tanpa migrasi/seeder, tanpa ubah .env.
+
+
+
+# 2026-10-11: Fix ReferenceError: route is not defined in Show.jsx (t_92189838)
+
+## Rencana
+- Memperbaiki `ReferenceError: route is not defined` di `resources/js/Pages/Admin/Order/Show.jsx` saat merubah status pesanan.
+- Mengganti pemanggilan `route('admin.pesanan.update', order.id)` dengan URL absolut `/admin/pesanan/${order.id}` karena `ziggy` tidak tersedia/terkonfigurasi.
+- Memverifikasi build frontend.
+
+## File yang Disentuh
+- `resources/js/Pages/Admin/Order/Show.jsx`
+
+## Hasil Verifikasi
+- `npm run build` sukses.
+- `Show.jsx` patch berhasil, `router.put` kini memakai URL string `/admin/pesanan/${order.id}`.
+
+## Rencana Baru (t_45abdcdc) — Perbaikan kolom 'resi' yang hilang
+
+1. Analisis: Error `SQLSTATE[42S22]: Column not found: 1054 Unknown column 'resi'` karena `OrderController` mencoba mengupdate kolom `resi` pada tabel `orders` yang sebenarnya bernama `tracking_number`.
+2. Tindakan: Perbarui `app/Http/Controllers/Admin/OrderController.php` (metode `update` dan `kirim`) untuk menggunakan `$order->tracking_number` alih-alih `$order->resi`.
+3. Verifikasi: `php -l`.
+
+## Hasil
+- Patch diterapkan pada `app/Http/Controllers/Admin/OrderController.php`:
+  - Method `update` (line 190): ganti `$order->resi = ...` dengan `$order->tracking_number = ...`
+  - Method `kirim` (line 260): ganti `$order->resi = ...` dengan `$order->tracking_number = ...`
+- Verifikasi sintaks PHP (`php -l app/Http/Controllers/Admin/OrderController.php`): ✅ No syntax errors.
+- Frontend konsisten: input `resi` tetap digunakan (sesuai kontrak Show.jsx).
+- Tanpa migrasi/seeder, tanpa ubah .env.
+- Berkas yang disentuh: app/Http/Controllers/Admin/OrderController.php, docs/catatan-backend.md.
+
+## Langkah untuk Pemilik
+- Tidak ada.
+
+## Untuk Frontend / QA
+- Tidak perlu perubahan: Form di Show.jsx tetap memakai field `resi` (seperti kontrak), backend kini menyimpan ke `tracking_number`.
+- Verifikasi ulang update status pesanan admin melalui UI (gambar tidak tersedia).
+
+# 2026-10-11: Fix ReferenceError: route is not defined in Admin/PesanMasuk/Index.jsx (t_393c99f3)
+
+## Rencana
+- Memperbaiki `ReferenceError: route is not defined` di `resources/js/Pages/Admin/PesanMasuk/Index.jsx` saat menekan tombol "Tandai Dibaca" atau "Hapus".
+- Mengganti pemanggilan `route()` dengan URL absolut `/admin/pesan-masuk/${id}/dibaca` dan `/admin/pesan-masuk/${id}`.
+
+## Hasil Verifikasi
+- Perbaikan di `resources/js/Pages/Admin/PesanMasuk/Index.jsx` berhasil diterapkan menggunakan `patch`.
+- `router.patch` dan `router.delete` kini menggunakan URL string absolut, konsisten dengan perbaikan sebelumnya di `t_92189838`.

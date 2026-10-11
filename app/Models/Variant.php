@@ -20,8 +20,8 @@ class Variant extends Model
         'size',
         'color',
         'price',
-        'stock',
-        'stock_minimum',
+        'stok',
+        'stok_minimum',
     ];
 
     protected $hidden = [

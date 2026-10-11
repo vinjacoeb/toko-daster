@@ -31,5 +31,10 @@ class DatabaseSeeder extends Seeder
 
         // 4. Produk Contoh (20 produk berbeda)
         $this->call(ProdukSeeder::class);
+
+        // 5. Pesanan dan Pesan Masuk Contoh (khusus lokal)
+        $this->call(PesananSeeder::class);
+        $this->call(PesanMasukSeeder::class);
+        $this->call(ContactMessageCommentSeeder::class);
     }
 }

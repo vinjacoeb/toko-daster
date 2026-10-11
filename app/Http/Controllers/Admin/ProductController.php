@@ -31,7 +31,7 @@ class ProductController extends Controller
         $products = $this->productService->getAllProducts($filters);
         $categories = Category::all(['id', 'name']);
 
-        return Inertia::render('Admin/Produk', [
+        return Inertia::render('Admin/Produk/Index', [
             'title' => 'Manajemen Produk',
             'data' => $products,
             'categories' => $categories,

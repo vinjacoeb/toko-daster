@@ -32,16 +32,16 @@ class ReportController extends Controller
 
         // Omzet hari ini
         $omzetHariIni = Order::where('status', '!=', 'batal')
-            ->whereDate('ordered_at', $today)
+            ->whereDate('dipesan_at', $today)
             ->sum('total');
 
         // Omzet bulan ini dengan perbandingan persen terhadap bulan lalu
         $omzetBulanIni = Order::where('status', '!=', 'batal')
-            ->whereBetween('ordered_at', [$startOfMonth, $today])
+            ->whereBetween('dipesan_at', [$startOfMonth, $today])
             ->sum('total');
 
         $omzetBulanLalu = Order::where('status', '!=', 'batal')
-            ->whereBetween('ordered_at', [$lastMonthStart, $lastMonthEnd])
+            ->whereBetween('dipesan_at', [$lastMonthStart, $lastMonthEnd])
             ->sum('total');
 
         $persentaseBulanLalu = $omzetBulanLalu > 0
@@ -53,7 +53,7 @@ class ReportController extends Controller
             ->count();
 
         // Varian stok menipis (stock <= stock_minimum)
-        $varianStokMenipis = Variant::whereColumn('stock', '<=', 'stock_minimum')
+        $varianStokMenipis = Variant::whereColumn('stok', '<=', 'stok_minimum')
             ->count();
 
         // Pesan belum dibaca (berdasarkan dibaca_at)
@@ -64,7 +64,7 @@ class ReportController extends Controller
         $produkTerlaris = OrderItem::select('product_id', DB::raw('SUM(qty) as total_terjual'))
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.status', '!=', 'batal')
-            ->where('orders.ordered_at', '>=', $today->copy()->subDays(30))
+            ->where('orders.dipesan_at', '>=', $today->copy()->subDays(30))
             ->groupBy('product_id')
             ->orderByDesc('total_terjual')
             ->limit(5)
@@ -80,7 +80,7 @@ class ReportController extends Controller
 
         // 5 pesanan terbaru
         $pesananTerbaru = Order::with(['user', 'items.variant.product'])
-            ->orderByDesc('ordered_at')
+            ->orderByDesc('dipesan_at')
             ->limit(5)
             ->get()
             ->map(function ($order) {
@@ -90,12 +90,12 @@ class ReportController extends Controller
                     'nama_pelanggan' => $order->nama_pelanggan,
                     'status' => $order->status,
                     'total' => $order->total,
-                    'ordered_at' => $order->ordered_at,
+                    'dipesan_at' => $order->dipesan_at,
                 ];
             });
 
         // 5 varian stok menipis
-        $varianStokMenipisList = Variant::whereColumn('stock', '<=', 'stock_minimum')
+        $varianStokMenipisList = Variant::whereColumn('stok', '<=', 'stok_minimum')
             ->with('product')
             ->limit(5)
             ->get()
@@ -103,13 +103,51 @@ class ReportController extends Controller
                 return [
                     'id' => $variant->id,
                     'sku' => $variant->sku,
-                    'size' => $variant->size,
-                    'color' => $variant->color,
-                    'stok' => $variant->stock,
-                    'stok_minimum' => $variant->stock_minimum,
+                    'ukuran' => $variant->ukuran,
+                    'warna' => $variant->warna,
+                    'stok' => $variant->stok,
+                    'stok_minimum' => $variant->stok_minimum,
                     'product_nama' => $variant->product->nama,
                 ];
             });
+
+        // Pendapatan bulanan: omzet per minggu dalam bulan ini vs bulan lalu
+        $kelompokTanggalBulanIni = [
+            ['1-7', 1, 7],
+            ['8-14', 8, 14],
+            ['15-21', 15, 21],
+            ['22-28', 22, 28],
+            ['29-31', 29, $startOfMonth->copy()->format('t')], // jumlah hari di bulan ini
+        ];
+        $kelompokTanggalBulanLalu = [
+            ['1-7', $lastMonth->copy()->startOfMonth()->day, $lastMonth->copy()->startOfMonth()->addDays(6)->day],
+            ['8-14', 8, 14],
+            ['15-21', 15, 21],
+            ['22-28', 22, 28],
+            ['29-31', 29, $lastMonth->copy()->endOfMonth()->day],
+        ];
+        $pendapatanBulanIni = [];
+        $pendapatanBulanLalu = [];
+        foreach ($kelompokTanggalBulanIni as $idx => $grup) {
+            $namaGrup = $grup[0];
+            $mulai = (int)$grup[1];
+            $akhir = (int)$grup[2];
+            $pendapatanBulanIni[] = Order::where('status', '!=', 'batal')
+                ->whereBetween('dipesan_at', [
+                    $startOfMonth->copy()->addDays($mulai - 1),
+                    $startOfMonth->copy()->addDays($akhir - 1),
+                ])
+                ->sum('total');
+            // bulan lalu
+            $mulaiLalu = (int)$kelompokTanggalBulanLalu[$idx][1];
+            $akhirLalu = (int)$kelompokTanggalBulanLalu[$idx][2];
+            $pendapatanBulanLalu[] = Order::where('status', '!=', 'batal')
+                ->whereBetween('dipesan_at', [
+                    $lastMonthStart->copy()->addDays($mulaiLalu - 1),
+                    $lastMonthStart->copy()->addDays($akhirLalu - 1),
+                ])
+                ->sum('total');
+        }
 
         // Settings
         $settings = [
@@ -122,15 +160,26 @@ class ReportController extends Controller
             'title' => 'Laporan',
             'user' => auth()->user(),
             'data' => [
-                'omzetHariIni' => $omzetHariIni,
-                'omzetBulanIni' => $omzetBulanIni,
-                'persentaseBulanLalu' => $persentaseBulanLalu,
-                'pesananPerluDiproses' => $pesananPerluDiproses,
-                'varianStokMenipis' => $varianStokMenipis,
-                'pesanBelumDibaca' => $pesanBelumDibaca,
-                'produkTerlaris' => $produkTerlaris,
-                'pesananTerbaru' => $pesananTerbaru,
-                'varianStokMenipisList' => $varianStokMenipisList,
+                'omzet_hari_ini' => $omzetHariIni,
+                'omzet_bulan_ini' => $omzetBulanIni,
+                'persentase_bulan_lalu' => $persentaseBulanLalu,
+                'pesanan_perlu_diproses' => $pesananPerluDiproses,
+                'varian_stok_menipis' => $varianStokMenipis,
+                'pesan_belum_dibaca' => $pesanBelumDibaca,
+                'produk_terlaris' => $produkTerlaris,
+                'pesanan_terbaru' => $pesananTerbaru,
+                'varian_stok_menipis_list' => $varianStokMenipisList,
+                'pendapatan_bulanan' => [
+                    'nama_bulan_ini' => $today->format('F'),
+                    'nama_bulan_lalu' => $lastMonth->format('F'),
+                    'kelompok' => array_map(fn($grup) => $grup[0], $kelompokTanggalBulanIni),
+                    'bulan_ini' => $pendapatanBulanIni,
+                    'bulan_lalu' => $pendapatanBulanLalu,
+                    'total_bulan_ini' => $omzetBulanIni,
+                    'total_bulan_lalu' => $omzetBulanLalu,
+                ],
+                'riwayat_pesanan_minggu_ini' => $pesananTerbaru, // gunakan pesanan terbaru sebagai placeholder untuk riwayat pesanan minggu ini
+                'stok_menipis_daftar' => $varianStokMenipisList,
             ],
             'filters' => [],
             'settings' => $settings,

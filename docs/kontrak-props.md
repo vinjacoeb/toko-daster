@@ -1,8 +1,48 @@
-#  Halaman: Admin Dashboard (AdminDashboardController)
+## Admin Laporan (/admin/laporan)
 
 ### Rute
-- nama_rute: `admin.index`
-- path: `/admin`
+- nama_rute: `admin.laporan.index`
+- path: `/admin/laporan`
+
+### Akses
+- peran: `admin`
+
+### Query
+- `tanggal_dari`, `tanggal_sampai`
+
+### Props
+```json
+{
+  "title": "Laporan",
+  "user": { "id": "integer", "name": "string", "email": "string" },
+  "data": {
+    "omzetHariIni": "integer",
+    "omzetBulanIni": "integer",
+    "persentaseBulanLalu": "float",
+    "pesananPerluDiproses": "integer",
+    "varianStokMenipis": "integer",
+    "pesanBelumDibaca": "integer",
+    "produkTerlaris": "array",
+    "pesananTerbaru": "array",
+    "varianStokMenipisList": "array"
+  },
+  "filters": "object",
+  "settings": "object"
+}
+```
+
+### Aturan
+- Cetak laporan: Frontend menggunakan `window.print()` dan CSS @media print.
+- CSV: Tautan unduh CSV (ekspor data berdasarkan filter).
+
+### Status
+DRAFT
+
+## Admin Pesan Masuk (/admin/pesan-masuk)
+
+### Rute
+- nama_rute: `admin.pesan-masuk.index`
+- path: `/admin/pesan-masuk`
 
 ### Akses
 - peran: `admin`
@@ -10,19 +50,341 @@
 ### Props
 ```json
 {
-  "title": "Dashboard",
-  "stats": {
-    "todayRevenue": "integer",
-    "thisMonthRevenue": "integer",
-    "monthOverMonth": "float",
-    "pendingOrders": "integer",
-    "lowStock": "integer",
-    "unreadMessages": "integer"
+  "messages": "object",
+  "komentar": "array"
+}
+```
+
+### Status
+DRAFT
+
+### Rute
+- `GET /login`
+- `POST /logout`
+
+### Siapa yang boleh mengakses
+- `/login`: tamu
+- `/logout`: admin yang sudah login
+
+### Query yang diterima
+- `/login`: tidak ada
+- `/logout`: tidak ada
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "loginError": "string|null"
+}
+```
+
+### Aturan validasi dan pesan galat
+Formulir login:
+- Email (wajib): format email valid, harus terdaftar
+- Password (wajib): minimal 8 karakter
+
+Masuk:
+- `"Email atau password tidak cocok"` (umum untuk kedua bidang)
+- `"Password minimal 8 karakter"` (jika panjang kurang dari 8)
+
+### Status
+LOCKED
+
+## Pengguna (Admin)
+
+### Rute
+- `GET /admin`
+- `GET /admin/produk`
+- `GET /admin/kategori`
+- `GET /admin/stok`
+- `GET /admin/pesanan`
+- `GET /admin/pesan-masuk`
+- `GET /admin/laporan`
+- `GET /admin/pengaturan`
+- `GET /admin/akun`
+
+### Siapa yang boleh mengakses
+- Semua rute admin: `admin` (user dengan email `admin@example.com`)
+
+### Query yang diterima
+Setiap rute admin menerima query paginasi dan filter opsional (misalnya, `search`, `status`, `kategori_id`).
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "user": {
+    "id": "integer",
+    "name": "string",
+    "email": "string"
   },
-  "grafik_omzet": "array", 
-  "produk_terlaris": "array",
-  "pesanan_terbaru": "array",
-  "stok_menipis": "array",
+  "data": "array", // array paginasi: { data, links, meta }
+  "filters": "object", // filter yang aktif
+  "settings": {
+    "whatsappNumber": "string",
+    "storeName": "string",
+    "storeTagline": "string"
+  }
+}
+```
+
+### Aturan validasi dan pesan galat
+- Validasi di server: nama (wajib, minimal 2 karakter), kontak (wajib, format email valid atau nomor HP valid minimal 10 digit), pesan (wajib, 1-1000 karakter). Pesan honeypot dan rate limit (3 kiriman per 10 menit per IP) diterapkan di backend.
+- Pesan galat validasi mengikuti konvensi error Inertia dengan key nested untuk setiap field.
+- Pesan umum: "Terlalu banyak percobaan pengiriman pesan. Coba lagi nanti."
+
+### Status
+LOCKED
+
+## Beranda (Landing Page)
+
+### Rute
+- `GET /`
+
+### Siapa yang boleh mengakses
+- Tampil untuk tamu
+
+### Query yang diterima
+- Tidak ada
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "settings": {
+    "whatsappNumber": "string",
+    "storeName": "string",
+    "storeTagline": "string",
+    "storeDescription": "string"
+  },
+  "featuredProducts": "array",
+  "fallbackProducts": "array"
+}
+```
+
+### Aturan validasi dan pesan galat
+- Gunakan data dari tabel `settings` untuk teks tetap (telepon WhatsApp, nama toko, tagline, deskripsi).
+- Produk unggulan: 4 produk berstatus `tayang` dengan `featured = true`; jika kurang dari 4, tambahkan produk tayang terbaru (berdasarkan created_at).
+- Tidak ada validasi klien.
+
+### Status
+DRAFT
+
+## Admin Produk (/admin/produk)
+
+### Rute
+- `GET /admin/produk`
+- `POST /admin/produk`
+- `GET /admin/produk/{id}`
+- `PUT /admin/produk/{id}`
+- `PATCH /admin/produk/{id}`
+- `DELETE /admin/produk/{id}`
+
+### Siapa yang boleh mengakses
+- Semua rute admin: `admin`
+
+### Query yang diterima
+- `GET /admin/produk`: `search`, `status`, `category_id`, `page`, `per_page`
+- `POST /admin/produk`: JSON body form
+- `GET /admin/produk/{id}`: tidak ada
+- `PUT /admin/produk/{id}`: JSON body form
+- `PATCH /admin/produk/{id}`: JSON body form (partial update)
+- `DELETE /admin/produk/{id}`: tidak ada
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "user": {
+    "id": "integer",
+    "name": "string",
+    "email": "string"
+  },
+  "data": "object", // paginasi: { data, links, meta }
+  "filters": "object",
+  "settings": {
+    "whatsappNumber": "string",
+    "storeName": "string",
+    "storeTagline": "string"
+  }
+}
+```
+
+### Aturan validasi dan pesan galat
+- Validasi di server:
+  - `name` (wajib, minimal 2 karakter, unik untuk produk aktif)
+  - `slug` (wajib, format: huruf/kata ganti underline, unik, steril)
+  - `category_id` (wajib, foreign key ke categories)
+  - `description` (opsional, teks)
+  - `material` (wajib)
+  - `care` (wajib)
+  - `price` (wajib, integer positif)
+  - `price_crossed` (opsional, harus lebih besar dari `price`)
+  - `status` (wajib, 'draf'/'tayang'/'arsip')
+  - `featured` (boolean)
+  - `product_images` (opsional, array objek { path, order }) – maks 8, jpeg/png/webp, ≤2MB per berkas
+  - `variants` (wajib, array objek:
+    - `size` (wajib, enum: All Size, S, M, L, XL, Jumbo)
+    - `color` (wajib, string)
+    - `sku` (wajib, unik di seluruh produk)
+    - `price` (opsional, integer, jika kosong ikuti harga produk)
+    - `stock` (wajib, integer ≥0)
+    - `stock_minimum` (wajib, integer ≥0)
+    - unik kombinasi (product_id, size, color)
+    )
+- Pesan galat: Format JSON; duplikat slug dan sku ditampilkan; validasi array memperlakukan setiap item secara terpisah.
+- Mode partial update: PATCH hanya memperbarui field yang diberikan, menjaga field lain yang wajib tidak berubah kecuali diganti.
+
+### Status
+LOCKED
+
+## Admin Kategori (/admin/kategori)
+
+### Rute
+- `GET /admin/kategori`
+- `POST /admin/kategori`
+- `GET /admin/kategori/{id}`
+- `PUT /admin/kategori/{id}`
+- `PATCH /admin/kategori/{id}`
+- `DELETE /admin/kategori/{id}`
+
+### Siapa yang boleh mengakses
+- Semua rute admin: `admin`
+
+### Query yang diterima
+- `GET /admin/kategori`: `search`, `page`, `per_page`
+- `POST /admin/kategori`: JSON body form
+- `GET /admin/kategori/{id}`: tidak ada
+- `PUT /admin/kategori/{id}`: JSON body form
+- `PATCH /admin/kategori/{id}`: JSON body form (partial update)
+- `DELETE /admin/kategori/{id}`: tidak ada
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "user": {
+    "id": "integer",
+    "name": "string",
+    "email": "string"
+  },
+  "data": "object",
+  "filters": "object",
+  "settings": {
+    "whatsappNumber": "string",
+    "storeName": "string",
+    "storeTagline": "string"
+  }
+}
+```
+
+### Aturan validasi dan pesan galat
+- Validasi di server:
+  - `name` (wajib, minimal 2 karakter, unik untuk kategori aktif)
+  - `slug` (wajib, format: huruf/kata ganti underline, unik, steril)
+  - `parent_id` (opsional, nullable, FK ke categories)
+- Pesan galat: slug duplikat dan nama duplikat.
+- Hapus ditolak jika masih memiliki produk atau subkategori (validasi di service layer).
+
+### Status
+LOCKED
+
+## Admin Varian (/admin/stok)
+
+### Rute
+- `GET /admin/stok` (daftar varian)
+- `POST /admin/stok` (penyesuaian stok)
+- `GET /admin/stok/{id}/riwayat` (riwayat gerakan)
+
+### Siapa yang boleh mengakses
+- Semua rute admin: `admin`
+
+### Query yang diterima
+- `GET /admin/stok`: `search`, `status_stok` (habis|menipis|aman), `page`, `per_page`
+- `POST /admin/stok`: JSON { variant_id, quantity, reason, order_id?, note? } (quantity bisa positif atau negatif)
+- `GET /admin/stok/{id}/riwayat`: `page`, `per_page`
+
+### Props yang dikembalikan
+```json
+{
+  "title": "Manajemen Stok",
+  "data": "object", // paginator: { data, links, meta }
+  "filters": "object"
+}
+```
+Untuk `GET /admin/stok/{id}/riwayat`:
+```json
+{
+  "title": "Riwayat Mutasi Stok",
+  "data": "object" // paginator riwayat
+}
+```
+
+Adendum t_e2268016 (kompatibel mundur, props Inertia di atas tidak berubah):
+- Drawer riwayat pada halaman `Admin/Stok/Stok.jsx` memanggil URL yang sama dengan header `Accept: application/json` dan menerima JSON `{ "variant": "object", "movements": "object" }`, dengan `movements` memakai bentuk paginator Laravel yang sama (`data`, `links`, `meta`).
+- Navigasi biasa (Inertia, tanpa header JSON) tetap menerima props halaman `Admin/Stok/Riwayat` seperti kontrak di atas. Tidak ada rute `/api` baru.
+
+### Aturan validasi dan pesan galat
+- Validasi di server:
+  - `POST /admin/stok`: `variant_id` wajib, `quantity` wajib (integer, tidak nol), `reason` wajib (string: restock|koreksi|rusak-hilang), `note` opsional.
+- Stok tidak boleh < 0 (ditangani oleh service stok).
+
+### Status
+LOCKED
+
+## Daftar Produk (/product)
+
+### Rute
+- `GET /product` (tanpa nama rute)
+
+### Siapa yang boleh mengakses
+- Publik (tamu)
+
+### Query yang diterima
+- `search`, `category`, `size`, `min_price`, `max_price`, `in_stock`, `sort`, `page`
+
+### Props yang dikembalikan
+```json
+{
+  "title": "Produk",
+  "products": "object",
+  "categories": [
+    { "id": "integer", "name": "string" }
+  ],
+  "filters": "object",
+  "settings": {
+    "whatsappNumber": "string"
+  }
+}
+```
+- `products`: paginator Laravel (data, links, meta).
+- `categories`: array objek { id, name }.
+- `filters`: object; `{}` saat tanpa query param. Selalu ter-encode sebagai JSON object, bukan array. Key hanya dari whitelist: search, category, size, min_price, max_price, in_stock, sort. Nilai kosong null.
+- Contoh filters aktif: `{ "search": "daster", "category": "1", "size": ["M"], "min_price": "50000", "max_price": "150000", "in_stock": "true", "sort": "price_asc" }`.
+
+### Aturan validasi dan pesan galat
+- Tidak ada formulir. Filter/sort diterapkan di server; nilai tidak valid diabaikan (fallback sort `latest`).
+- Galat validasi memakai mekanisme errors Inertia; pesan sukses lewat flash.
+
+### Status
+DRAFT
+
+## Detail Produk (/product/{slug})
+
+### Rute
+- `GET /product/{slug}`
+
+### Siapa yang boleh mengakses
+- Tampil untuk tamu
+
+### Query yang diterima
+- Tidak ada
+
+### Props yang dikembalikan
+```json
+{
+  "title": "string",
+  "product": "object",
   "settings": {
     "whatsappNumber": "string",
     "storeName": "string"
@@ -30,8 +392,44 @@
 }
 ```
 
+### Aturan validasi dan pesan galat
+- Jika produk tidak ada, draf, atau diarsipkan, tampilkan halaman 404 yang ramah (data dari PRD bagian 5.3).
+- Ambil produk dari database menggunakan `slug` dengan eager load kategori, varian, dan gambar.
+- Batasi gambar hingga maksimal 8.
+- Validasi server sisi client tidak diizinkan.
+
 ### Status
-LOCKED
+DRAFT
+
+## Standarisasi Controller Admin (t_d2c95e63)
+
+### Rute dan nama rute (tidak berubah)
+- `GET /admin` -> `admin.index` -> `App\Http\Controllers\Admin\DashboardController@index`
+- `GET /admin/pesan-masuk` -> `admin.pesan-masuk.index` -> `App\Http\Controllers\Admin\MessageController@index`
+- `GET /admin/pesanan`, `GET /admin/pesanan/create`, `POST /admin/pesanan`, `GET /admin/pesanan/{id}`, `PUT/PATCH /admin/pesanan/{id}`, `DELETE /admin/pesanan/{id}`, `POST /admin/pesanan/{id}/batal`, `POST /admin/pesanan/{id}/kirim`, `GET /admin/pesanan/{id}/cetak` -> `admin.pesanan.*` -> `App\Http\Controllers\Admin\OrderController` (sudah kanonis, tidak diubah)
+
+### Pemetaan lama -> baru
+- `App\Http\Controllers\AdminDashboardController` (hapus) -> `App\Http\Controllers\Admin\DashboardController` (kanonis, dipakai rute `admin.index`)
+- `App\Http\Controllers\AdminMessageController` (hapus, pindah) -> `App\Http\Controllers\Admin\MessageController` (baru, dipakai rute `admin.pesan-masuk.index`)
+- `App\Http\Controllers\AdminOrderController` (hapus, stub mati tak dipakai rute) -> `App\Http\Controllers\Admin\OrderController` (kanonis yang sudah dipakai rute, tidak ditimpa)
+
+### Siapa yang boleh mengakses
+- Semua rute di atas: `admin` (middleware `auth` pada grup `prefix admin` di `routes/web.php`)
+
+### Query yang diterima
+- Tidak berubah oleh kartu ini. `GET /admin/pesan-masuk`: paginasi standar (`page`, `per_page` bawaan 20).
+
+### Props yang dikembalikan
+- `GET /admin`: props dari `Admin\DashboardController@index` apa adanya (komponen `Admin/Dashboard/Index`): `{ "title": "string", "data": "object", "settings": "object" }`. Catatan: bagian LOCKED `Halaman: Admin Dashboard (AdminDashboardController)` di atas TIDAK diubah di kartu ini;props kanonis berbeda key (`data.omzetHariIni` dkk vs `stats.todayRevenue` dkk) dan perlu koordinasi frontend (t_3879c444) sebelum bagian LOCKED itu dimutakhirkan.
+- `GET /admin/pesan-masuk`: `{ "title": "Pesan Masuk", "messages": "object" }`, `messages` paginator Laravel (`data`, `links`, `meta`). Sama seperti sebelumnya; hanya namespace controller dan path komponen yang berubah (`AdminPesanMasuk` -> `Admin/PesanMasuk/Index` sesuai standar `docs/refactor-admin-standard.md`, komponen `Index.jsx` sudah ada dan membaca `messages.data`).
+- Rute pesanan: props tidak berubah di kartu ini (dirender `Admin/Order/Index`, `Admin/Order/Show` oleh `Admin\OrderController` yang sudah ada).
+
+### Aturan validasi dan pesan galat
+- Tidak ada formulir baru di kartu ini. Galat validasi memakai mekanisme errors Inertia; pesan sukses lewat flash.
+
+### Status
+DRAFT
+
 
 ## Admin Laporan (/admin/laporan)
 
@@ -85,8 +483,8 @@ DRAFT
 ### Props
 ```json
 {
-  "title": "Pesan Masuk",
-  "messages": "object" 
+  "messages": "object",
+  "komentar": "array"
 }
 ```
 
@@ -466,3 +864,39 @@ DRAFT
 
 ### Status
 DRAFT
+
+## Admin Dashboard (/admin)
+
+### Rute dan nama rute
+- `GET /admin` -> `admin.index` -> `App\Http\Controllers\Admin\DashboardController@index`
+
+### Siapa yang boleh mengakses
+- Admin (middleware `auth` pada grup `prefix admin` di `routes/web.php`).
+
+### Query yang diterima
+- Tidak ada.
+
+### Props yang dikembalikan (komponen `Admin/Dashboard/Index`)
+- Key bahasa Indonesia snake_case; uang integer rupiah; tanggal ISO 8601; minggu depan yang belum terjadi `null`.
+- `title`: "Dashboard".
+- `kartu`: `{ omzet_hari_ini, omzet_kemarin, omzet_bulan_ini, omzet_bulan_lalu, pesanan_perlu_diproses, stok_menipis, pesan_belum_dibaca }` (semua integer).
+- `perbandingan`: `{ hari_ini, minggu_ini, bulan_ini }`, tiap tab `{ label, sekarang, pembanding, total_sekarang, total_pembanding }`.
+  - `hari_ini`: label jam "00" s.d. jam sekarang; pembanding = kemarin jam yang sama.
+  - `minggu_ini`: label Senin s.d. Minggu; pembanding = minggu lalu (bawaan frontend).
+  - `bulan_ini`: label tanggal "1" s.d. akhir bulan; pembanding = bulan lalu nomor tanggal yang sama.
+- `pendapatan_bulanan`: `{ nama_bulan_ini, nama_bulan_lalu, kelompok: ["1-7","8-14","15-21","22-28","29-31"], bulan_ini: [], bulan_lalu: [], total_bulan_ini, total_bulan_lalu }`. Kelompok bulan ini yang belum terjadi = `null` (tidak digambar).
+- `riwayat_pesanan_minggu_ini`: maks 10 pesanan terbaru minggu berjalan (Senin-Minggu Asia/Jakarta): `[{ id, kode, nama_pelanggan, total, status, dipesan_at }]`.
+- `produk_terlaris`: 5 teratas 30 hari terakhir: `[{ id, nama, jumlah_terjual, omzet }]`.
+- `stok_menipis_daftar`: 5 varian: `[{ varian_id, produk_nama, ukuran, warna, stok, stok_minimum }]`.
+
+### Definisi bisnis (PRD 6.7 + dashboard-tambahan.md bagian 2-3)
+- Omzet = `SUM(total)` pesanan berstatus `dibayar, dikemas, dikirim, selesai` (bukan `baru`, bukan `batal`) menurut `dipesan_at`. Berlaku untuk kartu, perbandingan, batang bulanan, terlaris; angkanya sama dengan Laporan per periode yang sama.
+- Stok menipis = varian dengan `stok > 0 AND stok <= stok_minimum` (`whereColumn`), produk non-arsip. Counter `kartu.stok_menipis` memakai definisi yang sama dengan daftar.
+- Minggu = Senin s.d. Minggu, zona Asia/Jakarta. Bulan = kalender.
+- Pemetaan kolom aktual: pesanan `orders.code/customer_name/dipesan_at`; varian `variants.size/color/stok/stok_minimum` (bukan `ukuran/warna`); item `order_items.nama/warna/ukuran/harga/qty`; produk `products.name/status`.
+
+### Aturan validasi dan pesan galat
+- Tidak ada formulir di halaman ini. Galat validasi memakai mekanisme errors Inertia; pesan sukses lewat flash.
+
+### Status
+LOCKED

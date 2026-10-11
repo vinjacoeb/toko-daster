@@ -26,6 +26,11 @@ class Product extends Model
         'price_crossed',
         'status',
         'featured',
+        'sku',
+        'weight',
+        'image',
+        'order',
+        'stok',
     ];
 
     public function category(): BelongsTo

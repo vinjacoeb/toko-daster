@@ -137,6 +137,16 @@ Dokumen ini berisi struktur tabel database berdasarkan migrasi yang ada.
 | created_at | timestamp | Yes | null | — | |
 | updated_at | timestamp | Yes | null | — | |
 
+## Tabel contact_message_comments
+| Kolom | Tipe | Null | Default | FK | Komentar |
+|-------|------|------|---------|-----|----------|
+| id | bigIncrements | No | auto | — | Primary key |
+| contact_message_id | foreignId | No | — | FK → contact_messages | cascadeOnDelete |
+| user_id | foreignId | No | — | FK → users | restrictOnDelete |
+| isi | text | No | — | — | Maks 1.000 |
+| created_at | timestamp | Yes | null | — | |
+| updated_at | timestamp | Yes | null | — | |
+
 ## Tabel settings
 | Kolom | Tipe | Null | Default | FK | Komentar |
 |-------|------|------|---------|-----|----------|

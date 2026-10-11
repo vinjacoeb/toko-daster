@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title inertia>Toko Daster</title>
+        <script type="module">
+            import RefreshRuntime from 'http://[::1]:5173/@react-refresh'
+            RefreshRuntime.injectIntoGlobalHook(window)
+            window.$RefreshReg$ = ()=>{}
+            window.$RefreshSig$ = ()=>(type)=>type
+            window.__vite_plugin_react_preamble_installed__ = true
+        </script>
+        <script type="module" src="http://[::1]:5173/@vite/client"></script>
+        <script type="module" src="http://[::1]:5173/resources/js/app.jsx"></script>
+    </head>
+    <body class="font-sans antialiased">
+        <script data-page="app" type="application/json">
+            {
+                "component": "Admin\/Dashboard\/Index",
+                "props": {
+                    "errors": {
+                    },
+                    "title": "Dashboard",
+                    "data": {
+                        "omzet_hari_ini": "2191000",
+                        "omzet_kemarin": "534000",
+                        "omzet_bulan_ini": "3398000",
+                        "omzet_bulan_lalu": "7867000",
+                        "persentase_bulan_lalu": -56.8,
+                        "pesanan_perlu_diproses": 13,
+                        "varian_stok_menipis": 160,
+                        "pesan_belum_dibaca": 7,
+                        "grafik_omzet_30_hari": [
+                            "105000",
+                            "490000",
+                            "590000",
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            "99000",
+                            "534000",
+                            "465000",
+                            "104000",
+                            "544000",
+                            "440000",
+                            "109000",
+                            "89000",
+                            "455000",
+                            "549000",
+                            "109000",
+                            "440000",
+                            "544000",
+                            "104000",
+                            "465000",
+                            "534000",
+                            "2191000"
+                        ],
+                        "produk_terlaris": [
+                            {
+                                "id": 1,
+                                "nama": null,
+                                "jumlah_terjual": "85",
+                                "omzet": 7565000},
+                                {"id": 2,
+                                "nama": null,
+                                "jumlah_terjual": "18",
+                                "omzet": 1710000
+                            }
+                        ],
+                        "pesanan_terbaru": [
+                            {
+                                "id": 52,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 554000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T09:00:00.000000Z"
+                            },
+                            {
+                                "id": 51,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 460000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T08:00:00.000000Z"
+                            },
+                            {
+                                "id": 50,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 89000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T07:00:00.000000Z"
+                            },
+                            {
+                                "id": 43,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 544000,
+                                "status": "baru",
+                                "dipesan_at": "2026-10-10T22:00:00.000000Z"
+                            },
+                            {
+                                "id": 42,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 455000,
+                                "status": "baru",
+                                "dipesan_at": "2026-10-10T20:00:00.000000Z"
+                            }
+                        ],
+                        "varian_stok_menipis_list": [
+                            {
+                                "varian_id": 3,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Biru tua",
+                                "stok": 3,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 9,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Putih gading",
+                                "stok": 2,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 18,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Kuning",
+                                "stok": 0,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 23,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Merah",
+                                "stok": 2,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 27,
+                                "produk_nama": null,
+                                "ukuran": "All Size",
+                                "warna": "Hijau pandan",
+                                "stok": 0,
+                                "stok_minimum": 3
+                            }
+                        ],
+                        "pendapatan_bulanan": {
+                            "nama_bulan_ini": "October",
+                            "nama_bulan_lalu": "September",
+                            "kelompok": [
+                                "1-7",
+                                "8-14",
+                                "15-21",
+                                "22-28",
+                                "29-31"
+                            ],
+                            "bulan_ini": [
+                                "1751000",
+                                "3294000",
+                                0,
+                                0,
+                                0
+                            ],
+                            "bulan_lalu": [
+                                "2266000",
+                                "2350000",
+                                0,
+                                "1098000",
+                                "544000"
+                            ],
+                            "total_bulan_ini": "3398000",
+                            "total_bulan_lalu": "7867000"
+                        },
+                        "riwayat_pesanan_minggu_ini": [
+                            {
+                                "id": 52,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 554000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T09:00:00.000000Z"
+                            },
+                            {
+                                "id": 51,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 460000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T08:00:00.000000Z"
+                            },
+                            {
+                                "id": 50,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 89000,
+                                "status": "dikemas",
+                                "dipesan_at": "2026-10-11T07:00:00.000000Z"
+                            },
+                            {
+                                "id": 43,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 544000,
+                                "status": "baru",
+                                "dipesan_at": "2026-10-10T22:00:00.000000Z"
+                            },
+                            {
+                                "id": 42,
+                                "kode": null,
+                                "nama_pelanggan": null,
+                                "total": 455000,
+                                "status": "baru",
+                                "dipesan_at": "2026-10-10T20:00:00.000000Z"
+                            }
+                        ],
+                        "stok_menipis_daftar": [
+                            {
+                                "varian_id": 3,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Biru tua",
+                                "stok": 3,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 9,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Putih gading",
+                                "stok": 2,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 18,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Kuning",
+                                "stok": 0,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 23,
+                                "produk_nama": null,
+                                "ukuran": "XL",
+                                "warna": "Merah",
+                                "stok": 2,
+                                "stok_minimum": 3
+                            },
+                            {
+                                "varian_id": 27,
+                                "produk_nama": null,
+                                "ukuran": "All Size",
+                                "warna": "Hijau pandan",
+                                "stok": 0,
+                                "stok_minimum": 3
+                            }
+                        ]
+                    },
+                    "kartu": {
+                        "omzet_hari_ini": "2191000",
+                        "omzet_kemarin": "534000",
+                        "omzet_bulan_ini": "3398000",
+                        "omzet_bulan_lalu": "7867000",
+                        "persentase_bulan_lalu": -56.8,
+                        "pesanan_perlu_diproses": 13,
+                        "stok_menipis": 160,
+                        "pesan_belum_dibaca": 7
+                    },
+                    "perbandingan": {
+                        "hari_ini": {
+                            "label": [
+                                "0:00"
+                            ],
+                            "sekarang": [
+                                0
+                            ],
+                            "pembanding": [
+                                0
+                            ],
+                            "total_sekarang": "2191000",
+                            "total_pembanding": "534000"
+                        },
+                        "minggu_ini": {
+                            "label": [
+                                "Mon",
+                                "Tue",
+                                "Wed",
+                                "Thu",
+                                "Fri",
+                                "Sat",
+                                "Sun"
+                            ],
+                            "sekarang": [
+                                "109000",
+                                "440000",
+                                "544000",
+                                "104000",
+                                "465000",
+                                "534000",
+                                "2191000"
+                            ],
+                            "pembanding": [
+                                "104000",
+                                "544000",
+                                "440000",
+                                "109000",
+                                "89000",
+                                "455000",
+                                "549000"
+                            ],
+                            "total_sekarang": "4387000",
+                            "total_pembanding": "2290000"
+                        },
+                        "bulan_ini": {
+                            "label": [
+                                "1-7",
+                                "8-14",
+                                "15-21",
+                                "22-28",
+                                "29-31"
+                            ],
+                            "sekarang": [
+                                "1751000",
+                                "3294000",
+                                0,
+                                0,
+                                0
+                            ],
+                            "pembanding": [
+                                "2266000",
+                                "2350000",
+                                0,
+                                "1098000",
+                                "544000"
+                            ],
+                            "total_sekarang": "3398000",
+                            "total_pembanding": "7867000"
+                        }
+                    },
+                    "settings": {
+                        "whatsappNumber": "081234567890",
+                        "storeName": "Toko Daster",
+                        "storeTagline": "Nyaman dipakai seharian"
+                    }
+                },
+                "url": "\/admin",
+                "version": "c2030490153c7ce07113e49c5656ce5a",
+                "sharedProps": [
+                    "errors"
+                ]
+            }</script>
+        <div id="app"></div>
+        <script data-inertia-devtools-id type="application/json">
+            "01M4MZRB5XTM3BM15CR0JZ2PSW"
+        </script>
+    </body>
+</html>

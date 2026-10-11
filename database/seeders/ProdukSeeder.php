@@ -14,7 +14,7 @@ class ProdukSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+        public function run(): void
     {
         // 20 produk dari docs/seed-produk.md
         $productsData = [
@@ -364,8 +364,8 @@ class ProdukSeeder extends Seeder
                     'sku' => $sku,
                     'size' => $variantData[0],
                     'color' => $variantData[1],
-                    'stock' => $variantData[2],
-                    'stock_minimum' => 3,
+                    'stok' => $variantData[2],
+                    'stok_minimum' => 3,
                     'price' => $variantData[2] >= 0 ? $product->price : null,
                 ]
             );

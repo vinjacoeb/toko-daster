@@ -95,8 +95,8 @@ class ProductService
                             'color' => $variantData['color'],
                             'sku' => $variantData['sku'],
                             'price' => $variantData['price'] ?? null,
-                            'stock' => $variantData['stock'],
-                            'stock_minimum' => $variantData['stock_minimum'],
+                            'stok' => $variantData['stok'],
+                            'stok_minimum' => $variantData['stok_minimum'],
                         ]);
                         $processedVariantIds[] = $existing->id;
                     } else {

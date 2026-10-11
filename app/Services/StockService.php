@@ -32,15 +32,15 @@ class StockService
                 throw new \Exception("Varian tidak ditemukan.");
             }
 
-            $newStock = $variant->stock + $quantity;
+            $newStock = $variant->stok + $quantity;
 
             if ($newStock < 0) {
                 throw ValidationException::withMessages([
-                    'stock' => 'Stok tidak cukup untuk transaksi ini.',
+                    'stok' => 'Stok tidak cukup untuk transaksi ini.',
                 ]);
             }
 
-            $variant->update(['stock' => $newStock]);
+            $variant->update(['stok' => $newStock]);
 
             StockMovement::create([
                 'variant_id' => $variantId,
@@ -63,27 +63,41 @@ class StockService
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('sku', 'like', "%{$search}%")
                   ->orWhere('color', 'like', "%{$search}%")
                   ->orWhere('size', 'like', "%{$search}%")
-                  ->orWhereHas('product', function($sub) use ($search) {
+                  ->orWhereHas('product', function ($sub) use ($search) {
                       $sub->where('name', 'like', "%{$search}%");
                   });
             });
         }
 
         if (!empty($filters['status_stok'])) {
-            if ($filters['status_stok'] === 'habis') {
-                $query->where('stock', '<=', 0);
-            } elseif ($filters['status_stok'] === 'menipis') {
-                $query->where('stock', '>', 0)->whereColumn('stock', '<=', 'stock_minimum');
-            } elseif ($filters['status_stok'] === 'aman') {
-                $query->where('stock', '>', 3);
+            switch ($filters['status_stok']) {
+                case 'habis':
+                    $query->where('stok', '<=', 0);
+                    break;
+
+                case 'menipis':
+                    $query->where('stok', '>', 0)
+                        ->where(function ($q) {
+                            $q->where('stok_minimum', '>', 0)
+                              ->whereColumn('stok', '<=', 'stok_minimum')
+                              ->orWhere(function ($sub) {
+                                  $sub->where('stok_minimum', '<=', 0)
+                                      ->where('stok', '<=', 3);
+                              });
+                        });
+                    break;
+
+                case 'aman':
+                    $query->where('stok', '>', 3);
+                    break;
             }
         }
 
-        return $query->paginate($perPage)->withQueryString();
+        return $query->latest()->paginate($perPage);
     }
 
     public function getGlobalStats(array $filters = []): array
@@ -92,32 +106,31 @@ class StockService
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('sku', 'like', "%{$search}%")
                   ->orWhere('color', 'like', "%{$search}%")
                   ->orWhere('size', 'like', "%{$search}%")
-                  ->orWhereHas('product', function($sub) use ($search) {
+                  ->orWhereHas('product', function ($sub) use ($search) {
                       $sub->where('name', 'like', "%{$search}%");
                   });
             });
         }
 
-        $allQuery = clone $query;
         $menipisQuery = clone $query;
         $habisQuery = clone $query;
 
-        $countMenipis = $menipisQuery->where('stock', '>', 0)
+        $countMenipis = $menipisQuery->where('stok', '>', 0)
             ->where(function ($q) {
-                $q->where('stock_minimum', '>', 0)
-                  ->whereColumn('stock', '<=', 'stock_minimum')
+                $q->where('stok_minimum', '>', 0)
+                  ->whereColumn('stok', '<=', 'stok_minimum')
                   ->orWhere(function ($sub) {
-                      $sub->where('stock_minimum', '<=', 0)
-                          ->where('stock', '<=', 3);
+                      $sub->where('stok_minimum', '<=', 0)
+                          ->where('stok', '<=', 3);
                   });
             })
             ->count();
-        
-        $countHabis = $habisQuery->where('stock', '<=', 0)
+
+        $countHabis = $habisQuery->where('stok', '<=', 0)
             ->count();
 
         return [

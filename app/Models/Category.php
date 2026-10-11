@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unique;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-#[Fillable(['parent_id', 'name', 'slug'])]
 #[Hidden(['deleted_at'])]
 #[Unique(['slug'])]
 class Category extends Model
@@ -19,6 +17,12 @@ class Category extends Model
     use SoftDeletes;
 
     protected $table = 'categories';
+
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'slug',
+    ];
 
     public function parent(): BelongsTo
     {

@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('kode', 'like', '%' . $request->search . '%')
+                $q->where('code', 'like', '%' . $request->search . '%')
                     ->orWhereHas('items.variant.product', function ($q2) use ($request) {
                         $q2->where('nama', 'like', '%' . $request->search . '%');
                     });
@@ -82,16 +82,16 @@ class OrderController extends Controller
         DB::transaction(function () use ($validated) {
             // Generate order code
             $date = $validated['dipesan_at'] ? date('ymd', strtotime($validated['dipesan_at'])) : date('ymd');
-            $lastOrder = Order::where('kode', 'like', 'TD-%' . $date . '-%')
+            $lastOrder = Order::where('code', 'like', 'TD-%' . $date . '-%')
                 ->orderByDesc('id')
                 ->first();
             $sequence = $lastOrder
-                ? intval(explode('-', $lastOrder->kode)[2])
+                ? intval(explode('-', $lastOrder->code)[2])
                 : 0;
-            $kode = 'TD-' . date('y') . $date . '-' . str_pad($sequence + 1, 3, '0', STR_PAD_LEFT);
+            $code = 'TD-' . date('y') . $date . '-' . str_pad($sequence + 1, 3, '0', STR_PAD_LEFT);
 
             $order = Order::create([
-                'kode' => $kode,
+                'code' => $code,
                 'nama_pelanggan' => $validated['nama_pelanggan'],
                 'no_hp' => $validated['no_hp'],
                 'alamat' => $validated['alamat'],
@@ -127,7 +127,7 @@ class OrderController extends Controller
                 $this->stockService->adjustStock(
                     $item['variant_id'],
                     -$item['quantity'],
-                    'Penjualan pesanan #' . $order->kode,
+                    'Penjualan pesanan #' . $order->code,
                     $order->id,
                     $item['note']
                 );
@@ -142,7 +142,7 @@ class OrderController extends Controller
         $order = Order::with(['items.variant.product', 'user'])->findOrFail($id);
 
         return Inertia::render('Admin/Order/Show', [
-            'title' => 'Detail Pesanan ' . $order->kode,
+            'title' => 'Detail Pesanan ' . $order->code,
             'data' => $order,
             'orderStatuses' => ['baru', 'dibayar', 'dikemas', 'dikirim', 'selesai', 'batal'],
             'orderChannels' => ['whatsapp', 'marketplace', 'langsung'],
@@ -180,14 +180,14 @@ class OrderController extends Controller
                     $this->stockService->adjustStock(
                         $item->variant_id,
                         $item->qty,
-                        'Pembatalan pesanan #' . $order->kode,
+                        'Pembatalan pesanan #' . $order->code,
                         $order->id,
                         'Pembatalan'
                     );
                 }
             }
             $order->status = $validated['status'];
-            $order->resi = $validated['resi'] ?? $order->resi;
+            $order->tracking_number = $validated['resi'] ?? $order->tracking_number;
             $order->save();
         }
 
@@ -209,7 +209,7 @@ class OrderController extends Controller
             $this->stockService->adjustStock(
                 $item->variant_id,
                 $item->qty,
-                'Penghapusan pesanan #' . $order->kode,
+                'Penghapusan pesanan #' . $order->code,
                 $order->id,
                 'Penghapusan'
             );
@@ -257,7 +257,7 @@ class OrderController extends Controller
         ]);
 
         $order->status = 'dikirim';
-        $order->resi = $validated['resi'];
+        $order->tracking_number = $validated['resi'];
         $order->save();
 
         return redirect()->back()->with('success', 'Resi pesanan berhasil disimpan.');
